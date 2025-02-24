@@ -1,0 +1,46 @@
+runtime: nodejs20
+# service: dev
+
+handlers:
+  # Serve index.html for root requests
+  - url: /
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+      Pragma: no-cache
+      Expires: 0
+
+  # Serve glTF files with proper content type
+  - url: /(.*\.gltf)$
+    static_files: dist/\1
+    upload: dist/(.*\.gltf)$
+    secure: always
+    http_headers:
+      Content-Type: "application/json"
+
+  - url: /(.*\.bin)$
+    static_files: dist/\1
+    upload: dist/(.*\.bin)$
+    secure: always
+    http_headers:
+      Content-Type: "application/octet-stream"
+
+  # Serve other static assets with caching
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|json|gltf|glb|bin))$
+    static_files: dist/\1
+    upload: dist/(.*\.(js|css|png|jpg|jpeg|gif|ico|json|gltf|glb|bin))$
+    secure: always
+    expiration: "15m"
+
+
+  # Catch-all handler for client-side routing
+  - url: /(.*)
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+      Pragma: no-cache
+      Expires: 0
